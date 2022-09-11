@@ -14,15 +14,36 @@
 
 #define BDHKMAPI DECLSPEC_IMPORT
 
-UNEXPLORED BdhkmBeginHooking
-UNEXPLORED BdhkmEndHooking
+/* Client context should be considered an opaque pointer. */
+typedef PVOID PBDHKM_CLIENT_CONTEXT;
+
+/* TODO
+* clientContext : Registered client context.
+*/
+BDHKMAPI __fastcall BOOL BdhkmBeginHooking(
+	_In_ PBDHKM_CLIENT_CONTEXT clientContext
+	);
+
+/* Commit hooks declared since the last BdhkmBeginHooking call on the given client
+*		context.
+* clientContext : Registered client context.
+*/
+BDHKMAPI __fastcall NTSTATUS BdhkmEndHooking(
+	_In_ PBDHKM_CLIENT_CONTEXT clientContext);
+
 UNEXPLORED BdhkmInstallEatHook
 UNEXPLORED BdhkmInstallIatHook
 UNEXPLORED BdhkmInstallInlineHook
 UNEXPLORED BdhkmInstallPointerHook
 UNEXPLORED BdhkmIsApiDllImports
 UNEXPLORED BdhkmQueryRegion
-UNEXPLORED BdhkmRegisterClient
+
+/* TODO
+* Returns an NTSTATUS with following meaning
+* 0xEA040007 : Client context allocation failed.
+*/
+BDHKMAPI __fastcall NTSTATUS BdhkmRegisterClient();
+
 UNEXPLORED BdhkmRegisterClient2
 UNEXPLORED BdhkmRemoveEatHook
 UNEXPLORED BdhkmRemoveIatHook
@@ -74,5 +95,12 @@ UNEXPLORED BdhkmSuspendEatHook
 UNEXPLORED BdhkmSuspendIatHook
 UNEXPLORED BdhkmSuspendInlineHook
 UNEXPLORED BdhkmSuspendPointerHook
-UNEXPLORED BdhkmUnregisterClient
+
+/* Unregister a client context previously acquired by BdhkmRegisterClient or
+* BdhkmRegisterClient2.
+* clientContext : Registered client context.
+* INVALID_PARAMETER_1 : clientContext is a null pointer.
+*/
+BDHKMAPI __fastcall NTSTATUS BdhkmUnregisterClient(
+	_In_ PBDHKM_CLIENT_CONTEXT clientContext);
 #endif
